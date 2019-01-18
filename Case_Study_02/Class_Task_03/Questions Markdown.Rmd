@@ -1,0 +1,31 @@
+---
+title: "Questions"
+author: "Callan Mix"
+date: "1/16/19"
+output:
+  html_document:  
+    keep_md: true
+    toc: true
+    toc_float: true
+    code_folding: hide
+    fig_height: 6
+    fig_width: 12
+    fig_align: 'center'
+---
+
+#Do different majors have different hobbies?
+
+
+#Do different majors lead to different amounts of debt?
+
+
+#Does religion play a role in choice of location?
+
+
+#Do men or women play more insturments?
+
+
+#Does level of scripture reading relate to testimony?
+
+
+#
