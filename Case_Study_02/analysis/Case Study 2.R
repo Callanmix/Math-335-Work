@@ -10,6 +10,8 @@ ggplot(filter(gapminder, gdpPercap < 50000), mapping = aes(x = lifeExp, y = gdpP
   labs(x = "Life Expectancy",y = "GDP Per Capita",size = "Population (100K)",color = "Continent") +
   theme_bw()
 
+ggsave("LifeExpectancyPlot.png", width = 15)
+
 continent <- gapminder %>%
   group_by(continent, year) %>% 
   summarise(gdpPercap = weighted.mean(gdpPercap, pop))
@@ -24,3 +26,5 @@ continent <- gapminder %>%
     facet_wrap(~continent,nrow = 1)) +
   labs(x = "Year",y = "GDP Per Capita",size = "Population (100K)",color = "Continent") +
   theme_bw()
+
+ggsave("continentplot.png", width = 15)
