@@ -19,14 +19,8 @@ output:
 
 ## Background
 
-I created two graphs that show GPD per Capita by year and by life expectancy.
+I created two graphs that show GPD per Capita by year and by life expectancy. I have never done a data visualization before of this size. I am brand new to programming and I learned a lot about how to do it. I used a lot of google and the text book. I am not sure if I could have done a different route using less code. 
 
-## Data Wrangling
-
-
-```r
-# Use this R-Chunk to clean & wrangle your data!
-```
 
 ## Data Visualization
 
@@ -44,7 +38,10 @@ ggplot(filter(gapminder, gdpPercap < 50000), mapping = aes(x = lifeExp, y = gdpP
 
 ```r
 ggsave("LifeExpectancyPlot.png", width = 15)
+```
 
+
+```r
 continent <- gapminder %>%
   group_by(continent, year) %>% 
   summarise(gdpPercap = weighted.mean(gdpPercap, pop))
@@ -61,12 +58,8 @@ continent <- gapminder %>%
   theme_bw()
 ```
 
-![](Wealth_and_Life_Expectancy_files/figure-html/plot_data-2.png)<!-- -->
+![](Wealth_and_Life_Expectancy_files/figure-html/plot_data2-1.png)<!-- -->
 
 ```r
 ggsave("continentplot.png", width = 15)
 ```
-
-## Conclusions
-
-I am not sure that I got the weight right for the second graph, but I am pround of what I have done. I would like any feedback that I can get for my first R project.

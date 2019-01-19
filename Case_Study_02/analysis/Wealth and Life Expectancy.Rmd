@@ -42,7 +42,7 @@ ggplot(filter(gapminder, gdpPercap < 50000), mapping = aes(x = lifeExp, y = gdpP
 ggsave("LifeExpectancyPlot.png", width = 15)
 ```
 
-```{r plot_data}
+```{r plot_data2}
 continent <- gapminder %>%
   group_by(continent, year) %>% 
   summarise(gdpPercap = weighted.mean(gdpPercap, pop))
