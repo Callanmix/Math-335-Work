@@ -6,6 +6,8 @@ Use the Editor instead of the console to work in R to be able to save your work.
 Chapter 11:
 Our goal is to turn files into data frames. 
 skip = n to skip lines in a read_csv() file
+read_csv() is faster and keeps characters as characters compared to read.csv()
+tibble-- tiny table = gives table information when printed
 comment = # to skip any comments in the file
 #  \n is to do a new line of data
 na = to show a value is missing from the original data set
