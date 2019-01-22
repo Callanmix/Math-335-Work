@@ -10,7 +10,7 @@ read_csv() is faster and keeps characters as characters compared to read.csv()
 tibble-- tiny table = gives table information when printed
 comment = # to skip any comments in the file
 #  \n is to do a new line of data
-na = to show a value is missing from the original data set
+na = to show a value is missing from the original data set.
 
 Use parse_number() to seperate a number from other markers $ % ect
 When actually Parsing, you can use function guess_parse to help you make the right choice.
