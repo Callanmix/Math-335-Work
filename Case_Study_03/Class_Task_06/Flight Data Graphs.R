@@ -10,17 +10,25 @@ ggplot(group_flights, aes(x = month, y = dis)) +
   scale_x_continuous(labels = c('Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', ' Aug', 'Sep',
                                 'Oct', 'Nov', 'Dec'), breaks = c(1,2,3,4,5,6,7,8,9,10,11,12)) +
   labs(title = "Average Distance Traveled From Airport", x = "Months", y = "Miles", 
-       color = "Airports")
+       color = "Airports") +
+  scale_color_manual(name = "Airports", labels = c("Newark","John F Kennedy","LaGuardia"),
+                     values = c('EWR'='yellow','JFK'='red','LGA'='orange'))
+
+
+
+
 
 leave <- group_by(flights, dest, month) %>% 
   summarise(ave = mean(dep_delay), average = mean(arr_delay), dis = mean(distance))
 
-ggplot(filter(leave, quantile(average >= .75)), aes(x = month, y = average)) +
-  geom_jitter(aes(color = dest), show.legend = FALSE) +
+
+
+ggplot(leave, aes(x = month, y = average)) +
+  geom_point(aes(color = month), show.legend = FALSE) +
+  geom_smooth(aes(alpha = .01), se = FALSE, show.legend = FALSE) +
   scale_x_continuous(labels = c('Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', ' Aug', 'Sep',
                                 'Oct', 'Nov', 'Dec'), breaks = c(1,2,3,4,5,6,7,8,9,10,11,12)) +
-  labs(title = "Average Arrival Delay per Airport", x = "Months", y = "Minutes", 
-       color = "Airports")
+  labs(title = "Average Arrival Delay ", x = "Months", y = "Minutes", caption = "2013")
 
 
 
@@ -57,4 +65,4 @@ ggplot(dist, mapping = aes(y = ave, x = month)) +
                                 27000000, 28000000, 29000000,30000000, 31000000, 32000000)) +
   scale_x_continuous(labels = c('Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', ' Aug', 'Sep',
                      'Oct', 'Nov', 'Dec'), breaks = c(1,2,3,4,5,6,7,8,9,10,11,12)) +
-  labs(title = "Total Flight Distance Per Month", x = "Months", y = "Distance")
+  labs(title = "Total Flight Distance Per Month", x = "Months", y = "Distance (Miles)", subtitle = "2013 US")
