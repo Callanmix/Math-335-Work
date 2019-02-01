@@ -1,0 +1,47 @@
+---
+title: "Task 8"
+author: "Callan Mix"
+date: "`r format(Sys.time(), '%B %d, %Y')`"
+output:
+  html_document:  
+    keep_md: true
+    toc: true
+    toc_float: true
+    code_folding: hide
+    fig_height: 6
+    fig_width: 12
+    fig_align: 'center'
+---
+
+```{r, echo=FALSE}
+knitr::opts_chunk$set(echo = TRUE, message = FALSE, warning = FALSE)
+```
+
+```{r load_libraries, include=FALSE}
+library(tidyverse)
+library(devtools)
+```
+
+```{r load_data}
+health <- ourworldindata::financing_healthcare
+
+```
+
+## Background
+
+I am not sure how well this graph works, but this shows the general trend of child mortality.
+
+
+## Data Visualization
+
+```{r plot_data}
+health %>% 
+  group_by(country, child_mort, continent, year) %>% filter(year >= 1800) %>% 
+  ggplot(aes(x = year, y = child_mort)) +
+  geom_smooth() +
+  labs(title = "Child Mortality per 1000 People", x = "Year", y = "Child Mortality") +
+  theme_grey()
+
+```
+
+
