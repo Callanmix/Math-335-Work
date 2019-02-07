@@ -60,14 +60,15 @@ This graph shows average return for different stock indexes over ten years.
 
 ## Data Table
 ```{r table}
-clean_stocks %>% 
+stock <- clean_stocks %>% 
   filter(variable == "DJIA") %>% 
   mutate(month_end = fct_relevel(month_end, month.name)) %>% 
   group_by(month_end) %>% 
   spread(year_end,value) %>% 
   select(-1,-3) %>% 
-  summarise_all(sum, na.rm = TRUE) %>% 
-  pander::pander()
+  summarise_all(sum, na.rm = TRUE) 
+
+  knitr::kable(view(stock),format = "markdown")
 
 ```
 
