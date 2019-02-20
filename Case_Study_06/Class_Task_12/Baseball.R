@@ -41,12 +41,12 @@ final_tab <- tab3 %>%
   mutate(new = salary/adj_value) %>% 
   select(year:state, adj_value, new)
 
-final_tab %>% 
+MLB_Graph <- final_tab %>% 
   filter(state == "UT") %>% 
   ggplot(aes(y = salary, x = schoolID)) + 
   geom_boxplot(aes(group = schoolID, fill = schoolID), show.legend = FALSE) +
-  labs(title = "BYU MBA Salaries Comparted to Other Utah Schools", x = "School", y = "Salary") +
+  labs(title = "BYU MLB Salaries Comparted to Other Utah Schools", x = "School", y = "Salary") +
   scale_y_continuous(breaks = c(1000000,2000000,3000000,4000000,5000000),
                      labels = c("1 Million","2 Million","3 Million","4 Million","5 Million"))
-
+write_rds(MLB_Graph,here::here("Case_Study_06/Class_Task_12/MLB_Graph.rds"))
 
