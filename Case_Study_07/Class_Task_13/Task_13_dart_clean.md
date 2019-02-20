@@ -57,10 +57,26 @@ head(clean_stocks)
 
 ```r
 clean_stocks %>% 
+  mutate(month_end = factor(month_end,month.name)) %>% 
   ggplot(aes(x = month_end, y = value)) +
-  geom_violin(aes(group = month_end, fill = month_end), show.legend = FALSE)
+  geom_violin(aes(group = month_end, fill = month_end), show.legend = FALSE) +
+  labs(x = "Months", y = "Values")
 ```
 
 ![](Task_13_dart_clean_files/figure-html/plot_data-1.png)<!-- -->
 
-## Conclusions
+This shows the six month returns for each of these months. 
+
+
+```r
+clean_stocks %>% 
+  mutate(month_end = factor(month_end,month.name)) %>% 
+  ggplot(aes(x = month_end, y = value)) +
+  geom_violin(aes(group = month_end, fill = month_end), show.legend = FALSE) +
+  labs(x = "Months", y = "Values") +
+  facet_wrap(facets = "variable") 
+```
+
+![](Task_13_dart_clean_files/figure-html/unnamed-chunk-2-1.png)<!-- -->
+
+And this one shows the data from each of the stocks. 
