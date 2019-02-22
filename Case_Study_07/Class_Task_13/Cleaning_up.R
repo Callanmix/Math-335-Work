@@ -22,6 +22,7 @@ clean_stocks %>%
 
 
 clean_stocks %>% 
+  mutate(month_end = factor(month_end,month.name)) %>% 
   ggplot(aes(x = month_end, y = value)) +
   geom_violin(aes(group = month_end, fill = month_end), show.legend = FALSE)
 
