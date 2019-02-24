@@ -51,10 +51,10 @@ full_names <- full_service_names %>% str_trim() %>% str_to_lower() %>% str_c(col
 
 It is 2010, and you are working for the Idaho restaurant commission, and they need your help getting a clearer picture of how restaurant construction changed across Idaho from 2008 to 2009. They provided you a dataset of all commercial construction in Idaho for those two years. The data has a variable Type with a general category called Food_Beverage_Service that has other buildings besides restaurants in the category. You will need to use the restaurant names (see restaurants data object) and some additional key words to create the correct subgroupings. Your client expects to provide new data for 2010 and 2011 so your script needs to do the work. Make sure you do not use Excel to manipulate anything.
 
-How did full-service restaurant construction compare to quick service restaurant construction across county and years?
-How did restaurant construction fare compare to the other commercial construction in Idaho?
-Which county in Idaho spent the most on fast food construction each year?
-In that county how did other commercial construction compare?
+1. How did full-service restaurant construction compare to quick service restaurant construction across county and years?
+2. How did restaurant construction fare compare to the other commercial construction in Idaho?
+3. Which county in Idaho spent the most on fast food construction each year?
+4. In that county how did other commercial construction compare?
 
 ## Data Wrangling
 
