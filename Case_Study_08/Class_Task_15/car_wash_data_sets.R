@@ -12,7 +12,12 @@ cash <- car_wash %>%
            with_tz("America/Denver" )) %>% 
   mutate(ceiling = ceiling_date(change, unit = "hour")) %>%
   group_by(ceiling) %>% 
-  summarise(price = sum(amount)) 
+  summarise(price = sum(amount)) %>% arrange(ceiling)
+
+
+
+
+
 
 
 
@@ -20,22 +25,36 @@ cash <- car_wash %>%
 
 temp <- riem_measures(station = "RXE",  date_start  = "2016-05-13",  date_end  =  "2016-07-18")
 
-weather <- temp %>% 
+
+weather <- temp[!is.na(temp$tmpf), ] %>% 
   mutate(ceiling = ceiling_date(valid, unit = "hour")) %>% 
   select(station:tmpf, sknt, ceiling) %>% 
   group_by(ceiling) %>% 
   summarise(tempture = mean(tmpf), wind_speed = mean(sknt)) 
 
 
-bound <- bind_rows(cash, weather)
+bound <- merge(cash, weather)
 
 
 
 
+bound %>% 
+  ggplot(aes(x = ceiling, y = price)) +
+  geom_point(color = "red") +geom_smooth(color = "red") +
+  geom_point(aes(y = tempture), color = "blue") +geom_smooth(aes(y = tempture), color = "blue") 
 
+bound %>% 
+  ggplot(aes(x = ceiling, y = price)) +
+  geom_point(color = "red") +geom_smooth(color = "red") 
 
+bound %>% 
+  ggplot(aes(x = ceiling, y = tempture)) +
+  geom_point(color = "blue") +geom_smooth(color = "blue")
 
-yday(mdy("March 23, 2016"))
+ggpubr::ggarrange(bound %>% 
+                    ggplot(aes(x = ceiling, y = price)) +
+                    geom_point(color = "red") +geom_smooth(color = "red"),
+                    bound %>% 
+                       ggplot(aes(x = ceiling, y = tempture)) +
+                       geom_point(color = "blue") +geom_smooth(color = "blue"))
 
-jan31 <- ymd("2013-01-31")
-jan31 %>% duration(units = "month") 
