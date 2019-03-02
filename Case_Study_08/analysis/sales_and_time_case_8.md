@@ -1,0 +1,125 @@
+---
+title: "Case Study 8: It’s about time"
+author: "Callan Mix"
+date: "March 02, 2019"
+output:
+  html_document:  
+    keep_md: true
+    toc: true
+    toc_float: true
+    code_folding: hide
+    fig_height: 6
+    fig_width: 12
+    fig_align: 'center'
+---
+
+
+
+
+
+
+```r
+sale <- read_csv("https://byuistats.github.io/M335/data/sales.csv")
+```
+
+## Background
+
+We have transaction data for a few businesses that have been in operation for three months. Each of these companies has come to your investment company for a loan to expand their business. Your boss has asked you to go through the transactions for each business and provide daily, weekly, and monthly gross revenue summaries and comparisons. Your boss would like a short write up with tables and visualizations that help with the decision of which company did the best over the three month period. You will also need to provide a short paragraph with your recommendation after building your analysis.
+
+In our course we are only looking at understanding and visualizing recorded time series data. If you would like to learn more about forecasting I would recommend Forecasting: Principles and Practice and for a quick introduction see here
+
+
+## Data Wrangling
+
+
+```r
+dat_time <- sale %>% 
+  mutate(fix_time = force_tz(Time, tzone = "GMT") %>% with_tz("America/Denver")) %>% 
+  mutate(hour = ceiling_date(fix_time, unit = 'hour'),
+         just_hours = format(as.POSIXct(hour) ,format = "%H:%M:%S"),
+         day = ceiling_date(fix_time, unit = 'day'),
+         week = ceiling_date(fix_time, unit = 'week'),
+         month = ceiling_date(fix_time, unit = 'month'),
+         weekdays = weekdays(as.Date(.$fix_time))) %>% 
+  .[-15631, ]
+```
+
+## Graphs By Hour
+
+
+```r
+dat_time %>% 
+  filter(just_hours >= "09:00:00", Name != "Missing") %>% 
+  group_by(Name, just_hours) %>% 
+  summarise(price = median(Amount)) %>% 
+  ggplot(aes(x = just_hours, y = price)) +
+  geom_point(aes(color = Name)) +
+  geom_path(aes(group = Name, color = Name)) + 
+  facet_wrap(facets = "Name") +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1)) +
+  scale_x_discrete(breaks = c("08:00:00","12:00:00","16:00:00","20:00:00"))
+```
+
+![](sales_and_time_case_8_files/figure-html/unnamed-chunk-2-1.png)<!-- -->
+
+
+
+```r
+dat_time %>% 
+  filter(just_hours >= "08:00:00", Name != "Missing", Amount <= 250) %>% 
+  group_by(just_hours) %>% 
+  ggplot(aes(x = just_hours, y = Amount)) +
+  geom_violin(aes(group = just_hours, fill = just_hours), show.legend = FALSE) +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1)) +
+  scale_x_discrete(breaks = c("08:00:00","12:00:00","16:00:00","20:00:00"))
+```
+
+![](sales_and_time_case_8_files/figure-html/unnamed-chunk-3-1.png)<!-- -->
+
+## Graphs By Day
+
+
+```r
+dat_time %>% 
+  filter(just_hours >= "08:00:00", Name != "Missing", Amount <= 150, Amount >=-150) %>%
+  group_by(just_hours) %>% 
+  ggplot(aes(x = just_hours, y = Amount)) +
+  geom_jitter(aes(color = weekdays), alpha = .5) +
+  geom_boxplot(aes(group = just_hours), fill = NA, outlier.shape = NA) +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1)) +
+  scale_x_discrete(breaks = c("08:00:00","12:00:00","16:00:00","20:00:00"))
+```
+
+![](sales_and_time_case_8_files/figure-html/unnamed-chunk-4-1.png)<!-- -->
+
+
+```r
+dat_time %>% 
+  filter(just_hours >= "08:00:00", Name != "Missing", Amount <= 150, Amount >=-150) %>%
+  group_by(just_hours) %>% 
+  ggplot(aes(x = just_hours, y = Amount)) +
+  geom_jitter(aes(color = Name), alpha = .5) +
+  geom_boxplot(aes(group = just_hours)) +
+  facet_wrap(facets = "weekdays", scales = "free_y") +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1)) +
+  scale_x_discrete(breaks = c("08:00:00","12:00:00","16:00:00","20:00:00"))
+```
+
+![](sales_and_time_case_8_files/figure-html/unnamed-chunk-5-1.png)<!-- -->
+## Graphs By Week
+
+
+```r
+# Use this R-Chunk to plot & visualize your data!
+```
+
+## Graphs By Month
+
+
+```r
+# Use this R-Chunk to plot & visualize your data!
+```
+
+## Conclusions
+
+Based on the data given I would suggest the best hours of operation would be
