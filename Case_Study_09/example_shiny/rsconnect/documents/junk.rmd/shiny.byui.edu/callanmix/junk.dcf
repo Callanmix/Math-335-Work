@@ -1,0 +1,12 @@
+name: junk
+title: junk
+username: callanmix
+account: callanmix
+server: shiny.byui.edu
+hostUrl: https://shiny.byui.edu/__api__
+appId: 538
+bundleId: 902
+url: https://shiny.byui.edu/content/538/
+when: 1551825407.02366
+asMultiple: FALSE
+asStatic: TRUE

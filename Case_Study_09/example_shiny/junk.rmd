@@ -1,0 +1,11 @@
+---
+title: "Test Case"
+author: "Me"
+date: "March 5, 2019"
+output: html_document
+---
+
+```{r }
+pacman::p_load(DT)
+datatable(iris)
+```

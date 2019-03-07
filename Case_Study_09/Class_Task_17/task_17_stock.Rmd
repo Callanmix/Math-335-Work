@@ -1,0 +1,166 @@
+---
+title: "Task 17"
+author: "Callan Mix"
+date: "`r format(Sys.time(), '%B %d, %Y')`"
+output:
+  html_document:  
+    keep_md: true
+    toc: true
+    toc_float: true
+    code_folding: hide
+    fig_height: 6
+    fig_width: 12
+    fig_align: 'center'
+---
+
+```{r, echo=FALSE}
+knitr::opts_chunk$set(echo = TRUE, message = FALSE, warning = FALSE)
+```
+
+```{r load_libraries, include=FALSE}
+# Use this R-Chunk to load all your libraries!
+#install.packages("tidyverse") # run this line once in console to get package
+library(tidyquant)
+
+```
+
+```{r load_data}
+name <- c("ABIOMED, Inc.","Advanced Micro Devices","TripAdvisor, Inc.","Fortinet, Inc.","Advance Auto Parts, Inc.","Chipotle Mexican Grill, Inc.")
+
+tickers_today <- c("ABMD","AMD","TRIP","FTNT","AAP","CMG")
+
+tick <- tidyquant::tq_get(tickers_today, get = "stock.price", from = "2018-10-01") 
+
+tick_advanced <- tidyquant::tq_get(tickers_today, get = "key.ratios", from = "2018-10-01") %>% unnest()
+```
+
+## Background
+
+The stock market is overflowing with data. There are many packages in R that allow us to get quick access to information on publicly traded companies. Imagine that you and a friend each purchased about $1,000 of stock in three different stocks at the start of October last year, and you want to compare your performance up to this week. Use the stock shares purchased and share prices to demonstrate how each of you fared over the period you were competing (assuming that you did not change your allocations).
+
+
+
+## Data Visualizations
+
+# Data Wrangling
+```{r}
+ticker <- tick %>% 
+  group_by(symbol) %>% 
+  tq_transmute(select     = adjusted, 
+               mutate_fun = periodReturn, 
+               period     = "daily", 
+               col_rename = "Ra")
+
+tick2 <- "XLK" %>% 
+  tq_get(get = "stock.price", from = "2018-10-01") %>% 
+  tq_transmute(select     = adjusted, 
+               mutate_fun = periodReturn, 
+               period     = "daily", 
+               col_rename = "Rb")
+
+base <- left_join(ticker,tick2,by = "date")
+
+base %>% 
+  group_by(symbol) %>% 
+  summarise(mean = mean(Ra))
+
+base %>% 
+  tq_performance(Ra = Ra, Rb = Rb, performance_fun = table.CAPM)
+```
+
+# Daily Returns
+
+```{r tidy_data}
+tick %>%     
+  group_by(symbol) %>%
+  tq_transmute(adjusted, periodReturn, period = "daily") %>%
+  tq_transmute(daily.returns, Return.clean, alpha = 0.05) %>%
+  tq_transmute(daily.returns, Return.excess, Rf = 0.03 / 252) %>% 
+  ggplot(aes(x = date, y = `daily.returns > Rf`, color = symbol)) +
+  geom_line() +
+  geom_smooth(method = "lm") +
+  facet_wrap(facets = "symbol")
+```
+
+# High and Lows
+
+```{r plot_data}
+base %>%
+  tq_transmute_xy(x = Ra, 
+                y = Rb,
+                mutate_fun = runCor,
+                n = 6,
+                col_rename = "rolling.corr.6") %>% 
+  ggplot(aes(x = date, y = rolling.corr.6, color = symbol)) +
+  geom_hline(yintercept = 0, color = palette_light()[[1]]) +
+  geom_line(size = 1) +
+  labs(title = "My Stocks: Rolling Correlation to XLK",
+       x = "", y = "Correlation", color = "") +
+  facet_wrap(~ symbol, ncol = 2) +
+  theme_tq() + 
+  scale_color_tq()  
+
+```
+
+# Correlation to the Tech Sector
+
+```{r }
+base %>%
+  tq_transmute_xy(x = Ra, 
+                y = Rb,
+                mutate_fun = runCor,
+                n = 6,
+                col_rename = "rolling.corr.6") %>% 
+  ggplot(aes(x = date, y = rolling.corr.6, color = symbol)) +
+  geom_hline(yintercept = 0, color = palette_light()[[1]]) +
+  geom_line(size = 1) +
+  labs(title = "My Stocks: Rolling Correlation to XLK",
+       x = "", y = "Correlation", color = "") +
+  facet_wrap(~ symbol, ncol = 2) +
+  theme_tq() + 
+  scale_color_tq()  
+```
+
+# Monthly Returns
+
+```{r }
+tick %>% 
+  group_by(symbol) %>% 
+  tq_transmute(select     = adjusted, 
+               mutate_fun = periodReturn, 
+               period     = "monthly", 
+               col_rename = "daily.returns") %>% 
+  ggplot(aes(x = date, y = daily.returns, fill = symbol)) +
+  geom_bar(position = "dodge", stat = "identity") +
+  labs(title = "My stocks: Monthly Returns",
+       y = "Returns", x = "", color = "") +
+  facet_wrap(~symbol) +
+  scale_y_continuous(labels = scales::percent) +
+  theme_tq() +
+  scale_fill_tq()
+```
+
+# Daily Returns of each combines three stocks
+
+```{r }
+c("FTNT","AAP","CMG") %>% tq_get(get = "stock.price", from = "2018-10-01") %>% 
+  group_by(symbol) %>% 
+  tq_transmute(select     = adjusted, 
+               mutate_fun = periodReturn, 
+               period     = "daily", 
+               col_rename = "daily.returns") %>% 
+  ungroup() %>% group_by(date) %>% 
+  summarise(mean = mean(daily.returns)) %>% 
+  ggplot(aes(x = date, y = mean)) +
+  geom_line(color = "red") +
+  geom_line(data = c("ABMD","AMD","TRIP") %>% tq_get(get = "stock.price", from = "2018-10-01") %>% 
+              group_by(symbol) %>% 
+              tq_transmute(select     = adjusted, 
+                           mutate_fun = periodReturn, 
+                           period     = "daily", 
+                           col_rename = "daily.returns") %>% 
+              ungroup() %>% group_by(date) %>% 
+              summarise(mean = mean(daily.returns)), aes(x = date, y = mean), color = "blue")
+```
+
+## Conclusions
