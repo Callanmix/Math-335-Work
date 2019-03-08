@@ -1,0 +1,12 @@
+name: interactive_graph_kroger-rmd
+title: interactive_graph_kroger-rmd
+username: callanmix
+account: callanmix
+server: shiny.byui.edu
+hostUrl: https://shiny.byui.edu/__api__
+appId: 556
+bundleId: 928
+url: https://shiny.byui.edu/content/556/
+when: 1552027801.84729
+asMultiple: FALSE
+asStatic: TRUE
