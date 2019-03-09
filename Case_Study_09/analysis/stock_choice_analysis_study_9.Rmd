@@ -1,0 +1,133 @@
+---
+title: "Case Study 9: Interacting with time"
+author: "Callan Mix"
+date: "`r format(Sys.time(), '%B %d, %Y')`"
+output:
+  html_document:  
+    keep_md: true
+    toc: true
+    toc_float: true
+    code_folding: hide
+    fig_height: 6
+    fig_width: 12
+    fig_align: 'center'
+---
+
+```{r, echo=FALSE}
+knitr::opts_chunk$set(echo = TRUE, message = FALSE, warning = FALSE)
+```
+
+```{r load_libraries, include=FALSE}
+# Use this R-Chunk to load all your libraries!
+#install.packages("tidyverse") # run this line once in console to get package
+pacman::p_load(tidyquant, timetk, dygraphs)
+
+```
+
+```{r load_data}
+## List of Stocks that you would like to use
+## c("Ford","Amazon","Coca Cola","Tesla","Disney","Twitter","Microsoft","Sony","Walmart")
+## List of tickers for those stocks
+## c("F","AMZN","KO","TSLA","DIS","TWTR","MSFT","SNE","WMT")
+
+tickers_used <- c("F","AMZN","KO","TSLA","DIS","TWTR","MSFT","SNE","WMT")
+
+start_date <- "2014-03-07"
+
+tick_for_ggplot <- tq_get(tickers_used, from = start_date, get = "stock.price")
+
+int_stock <- cbind(tk_xts(tq_get("F", from = start_date, get = "stock.price"),start = start_date, date_var = date, select = adjusted),
+          tk_xts(tq_get("AMZN", from = start_date, get = "stock.price"),start = start_date, date_var = date, select = adjusted),
+          tk_xts(tq_get("KO", from = start_date, get = "stock.price"),start = start_date, date_var = date, select = adjusted),
+          tk_xts(tq_get("TSLA", from = start_date, get = "stock.price"),start = start_date, date_var = date, select = adjusted),
+          tk_xts(tq_get("DIS", from = start_date, get = "stock.price"),start = start_date, date_var = date, select = adjusted),
+          tk_xts(tq_get("TWTR", from = start_date, get = "stock.price"),start = start_date, date_var = date, select = adjusted),
+          tk_xts(tq_get("MSFT", from = start_date, get = "stock.price"),start = start_date, date_var = date, select = adjusted),
+          tk_xts(tq_get("SNE", from = start_date, get = "stock.price"),start = start_date, date_var = date, select = adjusted),
+          tk_xts(tq_get("WMT", from = start_date, get = "stock.price"),start = start_date, date_var = date, select = adjusted))  
+          
+colnames(int_stock) <- c("Ford","Amazon","Coca Cola","Tesla","Disney","Twitter","Microsoft","Sony","Walmart")
+```
+
+## Background
+
+Your data science income has ballooned, and you need to find somewhere to invest $25,000 that you have saved over the last year. You have a savvy investment friend that is kind enough to tell you ten stocks he has been watching during the last year. You will need to visualize the last five years performance to help in the in the conversation with your friend.
+
+Your friend is going to give you his tickers at the beginning of your half-hour meeting with him (he is a busy friend). You will need to build an .Rmd file that will build a suite of visualizations rapidly for your conversation. You will need a series of stock performance graphics using  library(dygraphs) and library(ggplot2). In real life, you might use one or the other, but this task is built to help you move from ts and xts to tidy objects for visualization.
+
+Specifically, in class the Tuesday following this case study you will get 5 - 10 ticker symbols and will need to build visualizations quickly that allows you to answer questions about the stocks in a few seconds.
+
+## Stock Names and Tickers
+
+List of Stocks that you would like to use
+
+"Ford","Amazon","Coca Cola","Tesla","Disney","Twitter","Microsoft","Sony","Walmart"
+
+List of tickers for those stocks
+
+"F","AMZN","KO","TSLA","DIS","TWTR","MSFT","SNE","WMT"
+
+## Interactive Graphs
+
+```{r tidy_data}
+
+dygraph(int_stock) %>% 
+  dyRangeSelector() %>% 
+  dyHighlight(highlightSeriesOpts = list(strokeWidth = 3))
+
+```
+
+```{r }
+dygraph(int_stock) %>% 
+  dyRebase(value = 100) %>% 
+  dyRangeSelector() %>% 
+  dyHighlight(highlightSeriesOpts = list(strokeWidth = 3))
+```
+
+## Ggplot Graphs
+
+```{r plot_data}
+tick_for_ggplot %>% 
+  group_by(symbol) %>% 
+  tq_transmute(select     = adjusted, 
+               mutate_fun = periodReturn, 
+               period     = "monthly", 
+               col_rename = "daily.returns") %>% 
+  ggplot(aes(x = date, y = daily.returns,
+             fill = symbol)) +
+  geom_bar(position = "dodge", stat = "identity", show.legend = FALSE) +
+  labs(title = "My stocks: Monthly Returns",
+       y = "Returns", x = "", color = "") +
+  facet_wrap(~symbol) +
+  scale_y_continuous(labels = scales::percent) +
+  theme_tq() +
+  scale_fill_tq()
+```
+
+```{r }
+amount_invested <- 10000
+
+tick_for_ggplot %>%
+  group_by(symbol) %>%
+  tq_transmute(select     = adjusted, 
+               mutate_fun = periodReturn, 
+               period     = "monthly", 
+               col_rename = "Ra") %>%
+  tq_portfolio(assets_col   = symbol, 
+               returns_col  = Ra,
+               col_rename   = "investment.growth",
+               wealth.index = TRUE) %>%
+  mutate(investment.growth = investment.growth * amount_invested) %>% 
+  ggplot(aes(x = date, y = investment.growth)) +
+  geom_line(size = 2, color = palette_light()[[1]]) +
+  labs(title = "Portfolio Growth",
+       subtitle =  "$10,000 spead over all investments",
+       caption = "Over the course of five years",
+       x = "", y = "Portfolio Value") +
+  geom_smooth(method = "loess") +
+  theme_tq() +
+  scale_color_tq() +
+  scale_y_continuous(labels = scales::dollar)
+
+```
+## Conclusions
