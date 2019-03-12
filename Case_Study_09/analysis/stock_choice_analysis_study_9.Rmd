@@ -130,4 +130,43 @@ tick_for_ggplot %>%
   scale_y_continuous(labels = scales::dollar)
 
 ```
+
+```{r }
+join1 <- tq_get(tickers_used, from = start_date, get = "stock.price") %>% 
+  group_by(symbol) %>% 
+  tq_transmute(select     = adjusted, 
+               mutate_fun = periodReturn, 
+               period     = "monthly", 
+               col_rename = "Ra")
+
+join <- "DIA" %>% 
+  tq_get(get = "stock.price", from = start_date) %>% 
+  tq_transmute(select     = adjusted, 
+               mutate_fun = periodReturn, 
+               period     = "monthly", 
+               col_rename = "Rb")
+
+base <- left_join(join1,join,by = "date")
+
+
+knitr::kable(base %>% 
+  tq_performance(Ra = Ra, Rb = Rb, performance_fun = table.CAPM), caption = "Stock Correlation")
+
+base %>%
+  tq_transmute_xy(x = Ra, 
+                  y = Rb,
+                  mutate_fun = runCor,
+                  n = 6,
+                  col_rename = "rolling.corr.6") %>% 
+  ggplot(aes(x = date, y = rolling.corr.6, color = symbol)) +
+  geom_hline(yintercept = 0, color = palette_light()[[1]], show.legend = FALSE) +
+  geom_line(size = 1, show.legend = FALSE) +
+  labs(title = "My Stocks: Rolling Correlation to DIA",
+       x = "", y = "Correlation", color = "") +
+  facet_wrap(~ symbol, ncol = 2) +
+  theme_tq() + 
+  scale_color_tq()  
+
+```
+
 ## Conclusions
