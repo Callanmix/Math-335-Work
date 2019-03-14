@@ -1,4 +1,4 @@
-pacman::p_load(tidyquant)
+pacman::p_load(tidyquant, timetk, dygraphs)
 
 # Stocks used ->
 # ABIOMED, Inc.\ Advanced Micro Devices\ TripAdvisor, Inc.\ Fortinet, Inc.\ Advance Auto Parts, Inc.\ Chipotle Mexican Grill, Inc.
@@ -12,6 +12,19 @@ tick <- tidyquant::tq_get(tickers_today, get = "stock.price", from = "2018-10-01
 tick_advanced <- tidyquant::tq_get(tickers_today, get = "key.ratios", from = "2018-10-01") %>% unnest()
 
 #########################################
+ts_tick <- tk_xts(tick, start = "2014-03-07", date_var = date, select = adjusted)
+
+
+dygraph(ts_tick) %>% 
+  dyRangeSelector() %>% 
+  dyRebase(value = 333.3)
+
+
+
+
+
+
+###########################################
 
 c("FTNT","AAP","CMG") %>% tq_get(get = "stock.price", from = "2018-10-01") %>% 
   group_by(symbol) %>% 
@@ -74,7 +87,7 @@ base %>%
 base %>% 
   tq_performance(Ra = Ra, Rb = Rb, performance_fun = table.CAPM)
 
-######################################################
+
 base %>%
   tq_transmute_xy(x = Ra, 
                 y = Rb,
