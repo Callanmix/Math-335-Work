@@ -41,9 +41,11 @@ rivers <- water %>%
 id <- us_counties() %>% 
   filter(state_abbr == "ID")
 
-
-ggplot() +
+png(here::here("Case_Study_10/Class_Task_20/id_wells.png"))
+id_wells <- ggplot() +
   geom_sf(data = id, fill = "lightblue", alpha = .5) +
   geom_sf(data = well_5k, color = "red", alpha = .5, size = 1, shape = 10) +
   geom_sf(data = dams_50a, alpha = .5, color = "yellow", size = .5) +
-  geom_sf(data = rivers, size = 1, color = "blue") 
+  geom_sf(data = rivers, size = 1, color = "blue") +
+  coord_sf(datum = sf::st_crs(2043))
+dev.off()
