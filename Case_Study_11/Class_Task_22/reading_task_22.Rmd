@@ -1,0 +1,31 @@
+---
+title: "Task 22"
+author: "Callan Mix"
+date: "`r format(Sys.time(), '%B %d, %Y')`"
+output:
+  html_document:  
+    keep_md: true
+    toc: true
+    toc_float: true
+    code_folding: hide
+    fig_height: 6
+    fig_width: 12
+    fig_align: 'center'
+---
+
+```{r, echo=FALSE}
+knitr::opts_chunk$set(echo = TRUE, message = FALSE, warning = FALSE)
+```
+
+
+## Background
+
+This week we are going to get introduced to “big data” principles. We will discuss some of the issues and terminology but will not have any coding tasks associated with “big data”.
+
+## Notes
+
+With spark, we are able to take massive sets of data and run code by assigning different tasks to different drives. This lets us use more than just the processing power that we have personally. The article that I read was about Big Data and Hadoop.
+
+https://www.informationweek.com/big-data/big-data-analytics/big-data-debate-will-hadoop-become-dominant-platform/d/d-id/1109226
+
+Hadoop is 
