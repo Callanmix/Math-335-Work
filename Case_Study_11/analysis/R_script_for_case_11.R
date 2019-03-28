@@ -20,7 +20,7 @@ idaho_counties <- us_counties(resolution = "low") %>%
 
 
 merged <- left_join(permits,idaho_counties, by = c("countyfp","statefp")) %>% 
-  group_by(countyfp
+  group_by(countyfp)
            
 
 
@@ -34,7 +34,7 @@ leaflet() %>%
               highlightOptions = highlightOptions(color = "white", weight = 2, bringToFront = TRUE),
               fillOpacity = 1, smoothFactor = 1) %>% 
   addLayersControl(baseGroups = c(2000,2005,2010),
-                   options = layersControlOptions(collapsed = FALSE))
+                   options = layersControlOptions(collapsed = FALSE)) %>% 
   # Base groups
   addTiles(group = "OSM (default)") %>%
   addProviderTiles(providers$OpenStreetMap.BlackAndWhite, group = "Toner") %>%
