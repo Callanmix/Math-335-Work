@@ -200,6 +200,15 @@ ggplot(suicide_info_world, aes(suicide_per_100k, gdp_per_cap, size = sum_suicide
   transition_time(year) +
   ease_aes('linear')
 
+b <- ggplot(suicide_info_world, aes(suicide_per_100k, gdp_per_cap, size = sum_suicide,color = country))+
+  geom_point(alpha = .65, show.legend = FALSE) + 
+  labs(x = "GDP Per Capita",y = "Suicide Per 100,000 People" ) +
+# Here comes the gganimate code
+labs(title = 'Year: {frame_time}', x = 'GDP per capita', y = 'Suicide Per 100k') +
+  transition_time(year) +
+  ease_aes('linear') 
+
+animate(b, nframes = 600, duration = 20, fps = 30, end_pause = 5)
 
 ################ Leaflet ###########################
 for_leaflet <- suicide_info_world %>% 
